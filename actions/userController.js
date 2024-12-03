@@ -1,4 +1,6 @@
 "use server"
+import { PrismaClient } from "@prisma/client"
+const prisma = new PrismaClient();
 
 function isAlphaNumberic(x){
     const regex = /^[a-zA-z0-9]*$/
@@ -33,7 +35,16 @@ export const register = async function(prevState,formData){
         sucess:false
       }
     }
+
+   
+
     //storign new user in database
+    const user = await prisma.user.create({
+      data:{
+        username:ourUser.username,
+        password:ourUser.password
+      }
+    })
 
     return{
       sucess:true
