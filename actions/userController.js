@@ -4,11 +4,21 @@ const prisma = new PrismaClient();
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
 import {cookies} from 'next/headers'
+import { redirect } from "next/navigation";
 
 function isAlphaNumberic(x) {
   const regex = /^[a-zA-z0-9]*$/;
   return regex.test(x);
 }
+
+ export const logout =  async function (){
+      (await cookies()).delete("haikuapp")
+      redirect("/")
+}
+
+
+
+
 
 export const register = async function (prevState, formData) {
   const errors = {};
