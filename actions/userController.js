@@ -3,7 +3,7 @@ import { PrismaClient } from "@prisma/client";
 const prisma = new PrismaClient();
 import bcrypt from "bcrypt";
 import jwt from "jsonwebtoken";
-import {cookies} from 'next/headers'
+import { cookies } from "next/headers";
 import { redirect } from "next/navigation";
 
 function isAlphaNumberic(x) {
@@ -11,11 +11,66 @@ function isAlphaNumberic(x) {
   return regex.test(x);
 }
 
- export const logout =  async function (){
-      (await cookies()).delete("haikuapp")
-      redirect("/")
-}
+export const login = async function (prevState, formData) {
 
+  const failObject={
+    sucess:false,
+    message:"Invalid username / Password"
+  }
+
+  const ourUser = {
+    username: formData.get("username"),
+    password: formData.get("password"),
+  };
+  if (typeof ourUser.username != "string") ourUser.username = "";
+  if (typeof ourUser.password != "string") ourUser.password = "";
+
+  const user = await prisma.user.findUnique({
+    where:{
+      username:ourUser.username
+    }
+  })
+  if(!user){
+    return failObject
+  }
+
+  const matchOrNot =  bcrypt.compareSync(ourUser.password , user.password)
+
+  if(!matchOrNot){
+    return failObject
+  }
+
+  //create JWT value
+  const ourTokenValue = jwt.sign(
+    {
+      userId: user.id,
+      exp: Math.floor(Date.now() / 100) + 60 * 60 * 24,
+    },
+    process.env.JWT_SECRET
+  );
+
+  //log the user in by giving them a cookie
+
+  const cookiesInstance = await cookies();
+
+  cookiesInstance.set("haikuapp", ourTokenValue, {
+    httpOnly: true,
+    sameSite: "strict",
+    maxAge: 60 * 60 * 24,
+    secure: true,
+  });
+  console.log("Welcome" + user.username)
+  return redirect("/")
+
+};
+
+
+
+
+export const logout = async function () {
+  (await cookies()).delete("haikuapp");
+  redirect("/");
+};
 
 
 
@@ -40,6 +95,15 @@ export const register = async function (prevState, formData) {
   if (!isAlphaNumberic(ourUser.username))
     errors.username = "Username can only contain letters and numbers";
   if (ourUser.username == "") errors.username = "You must provide a username";
+
+  //check the username exists
+  const checkExists = await prisma.user.findUnique({
+    where:{
+      username:ourUser.username
+    }
+  })
+  if(checkExists)errors.username = "Username already exists."
+
 
   if (ourUser.password.length < 5) errors.password = "password is too short";
   if (ourUser.password.length > 50)
@@ -72,20 +136,18 @@ export const register = async function (prevState, formData) {
       exp: Math.floor(Date.now() / 100) + 60 * 60 * 24,
     },
     process.env.JWT_SECRET
-  )
+  );
 
+  //log the user in by giving them a cookie
 
-    //log the user in by giving them a cookie
+  const cookiesInstance = await cookies();
 
-    const cookiesInstance = await cookies();
-
-    cookiesInstance.set("haikuapp" , ourTokenValue ,{
-      httpOnly:true,
-      sameSite:"strict",
-      maxAge: 60 * 60 * 24,
-      secure:true
-    })
-
+  cookiesInstance.set("haikuapp", ourTokenValue, {
+    httpOnly: true,
+    sameSite: "strict",
+    maxAge: 60 * 60 * 24,
+    secure: true,
+  });
 
   return {
     sucess: true,
