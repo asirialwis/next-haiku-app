@@ -6,8 +6,9 @@ import { createHaiku } from "../actions/haikuController";
 export default function HaikuForm() {
 
 
-  const [formState,formAction] = useActionState(createHaiku , {})
-
+  // const [formState,formAction] = useActionState(createHaiku , {})
+  const defaultState = { errors: {} };
+  const [formState = defaultState, formAction] = useActionState(createHaiku, {});
   
   return (
     <form action={formAction} className="max-w-xs mx-auto">
