@@ -17,11 +17,19 @@ export default async function Header() {
           <div className="flex-none">
             <ul className="menu menu-horizontal px-1">
               {user && (
-                <li>
-                  <form action = {logout}>
-                    <button className="btn btn-neutral" >Log Out</button>
-                  </form>
-                </li>
+                <>
+                  <li className = "">
+                    <Link href="/create-haiku" className="btn btn-primary">
+                      Create Haiku
+                    </Link>
+                  </li>
+
+                  <li>
+                    <form action={logout}>
+                      <button className="btn btn-neutral">Log Out</button>
+                    </form>
+                  </li>
+                </>
               )}
               {!user && (
                 <li>
