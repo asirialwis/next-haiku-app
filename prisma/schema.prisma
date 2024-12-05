@@ -17,4 +17,16 @@ model user{
   id Int @id @unique @default(autoincrement())
   username String @unique
   password String 
+  haikus haiku[]
+}
+
+model haiku{
+  id Int @id @unique @default(autoincrement())
+  authorId Int
+  author user @relation(fields: [authorId], references: [id])
+  line1 String 
+  line2 String
+  line3 String
+  createdAt DateTime @default(now())
+  updateAt DateTime @updatedAt
 }

@@ -2,6 +2,8 @@
 
 import { redirect } from "next/navigation"
 import { getUserFromCookie } from "../lib/getUser"
+import { PrismaClient } from "@prisma/client"
+const prisma = new PrismaClient();
 
 
 async function sharedHaikuLogic(formData , user){
@@ -38,4 +40,16 @@ export const createHaiku = async function(prevstate, formData){
   if (results.errors.line1 || results.errors.line2 || results.errors.line3) {
     return { errors: results.errors }
   }
+
+  //save into db
+  const createHaiku = await prisma.haiku.create({
+        data:{
+          authorId:user.userId,
+          line1:formData.get("line1"),
+          line2:formData.get("line2"),
+          line3:formData.get("line3")
+        }
+  })
+  return redirect("/")
+
 }
