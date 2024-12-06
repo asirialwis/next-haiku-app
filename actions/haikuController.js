@@ -15,7 +15,7 @@ async function sharedHaikuLogic(formData , user){
       line2:formData.get("line2"),
       line3:formData.get("line3")
     }
-    console.log(ourHaiku)
+    // console.log(ourHaiku)
 
     if (ourHaiku.line1.length == 0) errors.line1 = "This field is required."
     if (ourHaiku.line2.length == 0) errors.line2 = "This field is required."
