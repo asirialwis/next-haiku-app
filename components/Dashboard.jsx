@@ -9,7 +9,7 @@ async function gethaiku(id) {
       authorId: id,
     },
   });
-  console.log(result);
+  // console.log(result);
   return result;
 }
 
@@ -20,6 +20,8 @@ export default async function Dashboard(props) {
     <div>
       <h2 className="text-center text-2xl text-gray-600 mb-5">Your Haikus</h2>
       {haikus.length === 0 ? (
+
+        
         <p className="text-center text-gray-500">No Haikus Found</p>
       ) : (
         haikus.map((haiku, index) => {

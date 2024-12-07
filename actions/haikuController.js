@@ -42,7 +42,7 @@ export const createHaiku = async function(prevstate, formData){
   }
 
   //save into db
-  const createHaiku = await prisma.haiku.create({
+  const saveHaiku = await prisma.haiku.create({
         data:{
           authorId:user.userId,
           line1:formData.get("line1"),
@@ -51,5 +51,9 @@ export const createHaiku = async function(prevstate, formData){
         }
   })
   return redirect("/")
+
+}
+
+export const editHaiku = async function(prevstate,formData){
 
 }

@@ -1,14 +1,21 @@
 "use client"
 import {useActionState , useActionStatus} from "react"
-import { createHaiku } from "../actions/haikuController";
+import { createHaiku , editHaiku } from "../actions/haikuController";
 
 
-export default function HaikuForm() {
+export default function HaikuForm(props) {
 
+  let actualAction;
+  if(props.action == "create"){
+      actualAction = createHaiku
+  }
+  if(props.action == "edit"){
+    actualAction = editHaiku
+  }
 
   // const [formState,formAction] = useActionState(createHaiku , {})
   const defaultState = { errors: {} };
-  const [formState = defaultState, formAction] = useActionState(createHaiku, {});
+  const [formState = defaultState, formAction] = useActionState(actualAction, {});
   
   return (
     <form action={formAction} className="max-w-xs mx-auto">
